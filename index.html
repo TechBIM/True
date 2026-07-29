@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#f2f2f7">
+<title>Mira esto</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f2f2f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif}
+  body{min-height:100svh;touch-action:none}
+  .app{position:fixed;inset:0;background:linear-gradient(#f8f8fb,#eef0f6);overflow:hidden}
+  .status{height:max(44px,env(safe-area-inset-top));padding-top:env(safe-area-inset-top);display:flex;align-items:center;justify-content:space-between;padding-left:18px;padding-right:18px;font-size:13px;font-weight:600;color:#111;z-index:20;position:relative}
+  .header{height:58px;background:rgba(248,248,250,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid rgba(60,60,67,.16);display:flex;align-items:center;justify-content:center;position:relative;z-index:20}
+  .back{position:absolute;left:12px;color:#007aff;font-size:28px;line-height:1}
+  .avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#ffd2e3,#ff88b7);font-size:17px;margin-right:8px}
+  .name{font-size:14px;font-weight:600;color:#111}
+  .chat{position:absolute;left:0;right:0;top:calc(max(44px,env(safe-area-inset-top)) + 58px);bottom:80px;padding:18px 14px;overflow:hidden}
+  .bubble{max-width:78%;padding:10px 14px;border-radius:20px;font-size:17px;line-height:1.25;opacity:0;transform:translateY(12px) scale(.96);transition:.5s cubic-bezier(.2,.8,.2,1);position:relative;z-index:8}
+  .bubble.show{opacity:1;transform:none}
+  .incoming{background:#e5e5ea;color:#000;border-bottom-left-radius:6px}
+  .typing{display:flex;gap:4px;align-items:center;width:58px}
+  .typing i{width:7px;height:7px;border-radius:50%;background:#8e8e93;animation:dot 1.2s infinite}
+  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes dot{0%,60%,100%{transform:translateY(0);opacity:.55}30%{transform:translateY(-4px);opacity:1}}
+  .composer{position:absolute;left:0;right:0;bottom:0;height:80px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(248,248,250,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(60,60,67,.15);display:flex;gap:9px;align-items:flex-start;z-index:20}
+  .camera{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#d1d1d6;font-size:18px}
+  .input{height:36px;flex:1;border:1px solid #c7c7cc;border-radius:18px;background:#fff;display:flex;align-items:center;padding:0 12px;color:#8e8e93;font-size:16px}
+  .send{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#007aff;color:#fff;font-size:18px}
+  canvas{position:fixed;inset:0;z-index:10;pointer-events:auto}
+  .hint{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);z-index:25;background:rgba(255,255,255,.76);padding:8px 12px;border-radius:999px;font-size:12px;color:#555;box-shadow:0 8px 24px rgba(0,0,0,.08);opacity:0;transition:.6s;white-space:nowrap}
+  .hint.show{opacity:1}
+  .flash{position:fixed;inset:0;z-index:9;background:radial-gradient(circle at center,rgba(255,255,255,.92),rgba(255,220,236,.45),transparent 70%);opacity:0;pointer-events:none}
+  .flash.go{animation:flash .9s ease}
+  @keyframes flash{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="status"><span id="clock">9:41</span><span>●●●  5G  🔋</span></div>
+  <div class="header"><span class="back">‹</span><div class="avatar">🌷</div><div class="name">Para ti</div></div>
+  <div class="chat">
+    <div class="bubble incoming typing" id="typing"><i></i><i></i><i></i></div>
+    <div class="bubble incoming" id="msg" style="margin-top:10px">Mira esto...</div>
+  </div>
+  <div class="composer"><div class="camera">📷</div><div class="input">iMessage</div><div class="send">↑</div></div>
+</div>
+<div class="flash" id="flash"></div>
+<canvas id="fx"></canvas>
+<div class="hint" id="hint">Toca o arrastra los tulipanes 🌷</div>
+
+<script>
+const canvas=document.getElementById('fx'),ctx=canvas.getContext('2d');
+let W=0,H=0,dpr=Math.min(devicePixelRatio||1,2),flowers=[],started=false;
+let tiltX=0,tiltY=0,pointer=null;
+
+function resize(){
+  W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;
+  canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+addEventListener('resize',resize);resize();
+
+function rnd(a,b){return Math.random()*(b-a)+a}
+function makeFlower(x=rnd(0,W),y=rnd(0,H)){
+  return {x,y,vx:rnd(-.7,.7),vy:rnd(-.7,.7),r:rnd(15,28),rot:rnd(0,Math.PI*2),vr:rnd(-.018,.018),emoji:Math.random()<.9?'🌷':'🌸',grab:false};
+}
+function burst(n=70){
+  for(let i=0;i<n;i++){
+    let f=makeFlower(W/2+rnd(-80,80),H*.42+rnd(-60,60));
+    let a=rnd(0,Math.PI*2),s=rnd(1.2,4.3);
+    f.vx=Math.cos(a)*s;f.vy=Math.sin(a)*s-1.4;flowers.push(f);
+  }
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  for(const f of flowers){
+    if(!f.grab){
+      f.vx += tiltX*.018;
+      f.vy += tiltY*.018 - .004;
+      f.vx *= .997; f.vy *= .997;
+      f.x += f.vx; f.y += f.vy; f.rot += f.vr;
+
+      if(f.x<f.r){f.x=f.r;f.vx=Math.abs(f.vx)*.92}
+      if(f.x>W-f.r){f.x=W-f.r;f.vx=-Math.abs(f.vx)*.92}
+      if(f.y<f.r+90){f.y=f.r+90;f.vy=Math.abs(f.vy)*.92}
+      if(f.y>H-f.r-76){f.y=H-f.r-76;f.vy=-Math.abs(f.vy)*.92}
+    }
+
+    ctx.save();
+    ctx.translate(f.x,f.y);ctx.rotate(f.rot);
+    ctx.font=(f.r*1.65)+'px Apple Color Emoji, sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.shadowColor='rgba(100,20,70,.18)';ctx.shadowBlur=8;ctx.shadowOffsetY=4;
+    ctx.fillText(f.emoji,0,0);
+    ctx.restore();
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+
+function nearest(x,y){
+  let best=null,bd=999;
+  for(const f of flowers){let d=Math.hypot(f.x-x,f.y-y);if(d<bd&&d<f.r*1.6){bd=d;best=f}}
+  return best;
+}
+canvas.addEventListener('pointerdown',e=>{
+  canvas.setPointerCapture(e.pointerId);
+  let f=nearest(e.clientX,e.clientY);
+  pointer={id:e.pointerId,x:e.clientX,y:e.clientY,f};
+  if(f)f.grab=true;else if(started){for(let i=0;i<6;i++)flowers.push(makeFlower(e.clientX+rnd(-25,25),e.clientY+rnd(-25,25)))}
+});
+canvas.addEventListener('pointermove',e=>{
+  if(!pointer||pointer.id!==e.pointerId||!pointer.f)return;
+  const f=pointer.f;f.vx=(e.clientX-pointer.x)*.18;f.vy=(e.clientY-pointer.y)*.18;f.x=e.clientX;f.y=e.clientY;pointer.x=e.clientX;pointer.y=e.clientY;
+});
+function release(e){if(!pointer||pointer.id!==e.pointerId)return;if(pointer.f)pointer.f.grab=false;pointer=null}
+canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);
+
+if(window.DeviceOrientationEvent){
+  addEventListener('deviceorientation',e=>{
+    if(e.gamma!=null)tiltX=Math.max(-1,Math.min(1,e.gamma/28));
+    if(e.beta!=null)tiltY=Math.max(-1,Math.min(1,(e.beta-20)/38));
+  });
+}
+
+function startEffect(){
+  if(started)return;started=true;
+  document.getElementById('flash').classList.add('go');
+  burst(92);
+  setTimeout(()=>{for(let i=0;i<34;i++)flowers.push(makeFlower())},650);
+  document.getElementById('hint').classList.add('show');
+  setTimeout(()=>document.getElementById('hint').classList.remove('show'),5000);
+  if(navigator.vibrate)navigator.vibrate([50,40,80]);
+}
+addEventListener('load',()=>{
+  const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString('es-MX',{hour:'numeric',minute:'2-digit'});
+  setTimeout(()=>document.getElementById('typing').classList.add('show'),400);
+  setTimeout(()=>{document.getElementById('typing').style.display='none';document.getElementById('msg').classList.add('show')},1700);
+  setTimeout(startEffect,2600);
+});
+</script>
+</body>
+</html>
