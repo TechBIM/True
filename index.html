@@ -3,88 +3,180 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#fff5f7">
+<meta name="theme-color" content="#09070a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Para ti">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./icon.svg">
-<title>Para ti 🌷</title>
+<title>Para el amor de mi vida</title>
 <style>
-:root{--pink:#ff4f81;--ink:#37242c;--glass:rgba(255,255,255,.76)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;background:#fff5f7;color:var(--ink)}
-body{min-height:100svh;touch-action:none}
-.bg{position:fixed;inset:0;background:radial-gradient(circle at 15% 12%,#ffe0e9 0,transparent 32%),radial-gradient(circle at 88% 18%,#fff0d8 0,transparent 31%),linear-gradient(155deg,#fffafd,#fff2f5 48%,#ffe9ef);z-index:0}
-.glow{position:fixed;width:65vw;height:65vw;border-radius:50%;filter:blur(45px);opacity:.33;background:#ff9db9;right:-25vw;bottom:-24vw;animation:breathe 5s ease-in-out infinite;z-index:0}
-@keyframes breathe{50%{transform:scale(1.14);opacity:.5}}
-.shell{position:fixed;inset:0;display:grid;place-items:center;padding:max(24px,env(safe-area-inset-top)) 18px max(24px,env(safe-area-inset-bottom));z-index:3}
-.card{width:min(92vw,470px);max-height:82svh;overflow:auto;padding:30px 24px 26px;border:1px solid rgba(255,255,255,.8);border-radius:34px;background:var(--glass);box-shadow:0 28px 80px rgba(120,48,75,.17);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);text-align:center;opacity:0;transform:translateY(24px) scale(.96);transition:1s cubic-bezier(.2,.8,.2,1)}
-.card.show{opacity:1;transform:none}
-.badge{width:72px;height:72px;border-radius:24px;margin:0 auto 14px;display:grid;place-items:center;font-size:38px;background:linear-gradient(145deg,#fff,#ffd6e2);box-shadow:0 12px 28px rgba(255,79,129,.18);animation:float 3.4s ease-in-out infinite}
-@keyframes float{50%{transform:translateY(-7px) rotate(2deg)}}
-h1{font-size:clamp(28px,8vw,42px);line-height:1.02;margin:8px 0 12px;letter-spacing:-1.3px}
-.subtitle{font-size:15px;opacity:.63;margin-bottom:18px}
-.message{font-family:Georgia,"Times New Roman",serif;font-size:clamp(17px,4.6vw,21px);line-height:1.55;text-align:left;padding:19px 18px;border-radius:24px;background:rgba(255,255,255,.6);box-shadow:inset 0 0 0 1px rgba(255,255,255,.8);opacity:0;transform:translateY(15px);transition:.9s ease}
-.message.show{opacity:1;transform:none}
-.message p{margin:0 0 14px}.message p:last-child{margin-bottom:0}
-.signature{text-align:right;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;font-weight:700;color:var(--pink);font-size:16px;padding-top:2px}
-.family{display:flex;justify-content:center;gap:8px;font-size:30px;margin:18px 0 3px;opacity:0;transform:scale(.72);transition:.8s cubic-bezier(.15,.9,.25,1.2)}
-.family.show{opacity:1;transform:scale(1)}
-.tap{margin-top:15px;border:0;border-radius:999px;padding:12px 18px;background:linear-gradient(135deg,#ff4f81,#ff789e);color:white;font-weight:700;font-size:14px;box-shadow:0 10px 25px rgba(255,79,129,.28);opacity:0;transform:translateY(8px);transition:.7s ease}
-.tap.show{opacity:1;transform:none}
-.note{font-size:11px;opacity:.45;margin-top:10px}
-canvas{position:fixed;inset:0;z-index:2;pointer-events:auto}
-.intro{position:fixed;inset:0;display:grid;place-items:center;z-index:10;background:linear-gradient(145deg,#fff9fb,#ffe9ef);transition:1s ease}
-.intro.hide{opacity:0;pointer-events:none}
-.intro-box{text-align:center;padding:30px}.intro-flower{font-size:72px;animation:pulse 1.8s ease-in-out infinite}@keyframes pulse{50%{transform:scale(1.12)}}
-.intro-title{font-size:32px;font-weight:800;letter-spacing:-1px;margin-top:12px}.intro-small{opacity:.55;margin-top:8px}
-.install{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:12;background:rgba(55,36,44,.88);color:#fff;padding:9px 13px;border-radius:999px;font-size:11px;opacity:0;transition:.5s;white-space:nowrap;pointer-events:none}.install.show{opacity:1}
+:root{--pink:#ff6f9f;--cream:#fff8f1;--ink:#3b2930}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#09070a;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+body{min-height:100svh;touch-action:manipulation}
+#stage{position:fixed;inset:0;overflow:hidden;background:#09070a;color:#fff}
+.scene{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:max(28px,env(safe-area-inset-top)) 24px max(30px,env(safe-area-inset-bottom));opacity:0;pointer-events:none;transition:1.1s ease}
+.scene.active{opacity:1;pointer-events:auto}
+.center{text-align:center;max-width:620px}
+.kicker{font-size:13px;letter-spacing:.22em;text-transform:uppercase;opacity:.52;margin-bottom:16px}
+.big{font-size:clamp(34px,10vw,62px);font-weight:750;letter-spacing:-2px;line-height:1.05}
+.soft{font-family:Georgia,"Times New Roman",serif;font-size:clamp(24px,7vw,42px);line-height:1.35;font-weight:400}
+.small{font-size:14px;opacity:.55;margin-top:18px}
+.heartbeat{font-size:62px;animation:heart 1.25s infinite ease-in-out;margin-bottom:20px}
+@keyframes heart{0%,100%{transform:scale(.9)}35%{transform:scale(1.12)}52%{transform:scale(.96)}}
+.tap{margin-top:28px;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.08);color:#fff;padding:13px 20px;border-radius:999px;font-size:14px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.chat-screen{background:linear-gradient(#f8f8fb,#eef0f6);color:#111;align-items:flex-start;padding:0}
+.chat-wrap{width:100%;height:100%;display:flex;flex-direction:column}
+.status{height:max(46px,env(safe-area-inset-top));padding-top:env(safe-area-inset-top);display:flex;align-items:center;justify-content:space-between;padding-left:18px;padding-right:18px;font-size:13px;font-weight:600}
+.header{height:58px;border-bottom:1px solid rgba(60,60,67,.14);display:flex;justify-content:center;align-items:center;background:rgba(248,248,250,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#ffd4e1,#ff8fb4);margin-right:8px}
+.name{font-weight:600;font-size:14px}
+.chat{flex:1;padding:18px 14px;overflow:hidden}
+.bubble{max-width:82%;padding:11px 15px;border-radius:21px;background:#e5e5ea;border-bottom-left-radius:7px;font-size:17px;line-height:1.3;margin-bottom:10px;opacity:0;transform:translateY(15px) scale(.96);transition:.65s cubic-bezier(.2,.8,.2,1)}
+.bubble.show{opacity:1;transform:none}
+.typing{width:62px;display:flex;gap:5px;align-items:center}
+.typing i{width:7px;height:7px;border-radius:50%;background:#8e8e93;animation:dot 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{transform:translateY(0);opacity:.45}30%{transform:translateY(-4px);opacity:1}}
+.composer{height:78px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));border-top:1px solid rgba(60,60,67,.13);display:flex;gap:9px}
+.input{height:36px;flex:1;border:1px solid #c7c7cc;border-radius:18px;background:#fff;color:#8e8e93;display:flex;align-items:center;padding:0 13px}
+.circle{width:34px;height:34px;border-radius:50%;background:#d1d1d6;display:grid;place-items:center}
+.story{background:radial-gradient(circle at 20% 10%,#5a1930,transparent 38%),radial-gradient(circle at 85% 85%,#301d45,transparent 38%),linear-gradient(155deg,#160b11,#080709);text-align:center}
+.story-text{max-width:680px;font-family:Georgia,"Times New Roman",serif;font-size:clamp(27px,7.5vw,48px);line-height:1.3;letter-spacing:-.6px;text-shadow:0 7px 30px rgba(0,0,0,.45)}
+.story-text span{display:block;opacity:.64;font-size:.64em;margin-bottom:10px;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif}
+.family-icons{font-size:48px;margin-top:24px;animation:float 3s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-8px)}}
+.letter-scene{background:radial-gradient(circle at 10% 10%,#ffe2eb,transparent 35%),radial-gradient(circle at 90% 90%,#fff0ce,transparent 32%),linear-gradient(145deg,#fffafc,#fff4f6);color:var(--ink);align-items:flex-start;overflow-y:auto}
+.letter{width:min(92vw,650px);margin:auto;padding:32px 23px 38px;border-radius:34px;background:rgba(255,255,255,.78);box-shadow:0 28px 90px rgba(105,45,70,.16);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);font-family:Georgia,"Times New Roman",serif;font-size:clamp(17px,4.7vw,21px);line-height:1.58}
+.letter h2{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;font-size:clamp(30px,9vw,48px);letter-spacing:-1.5px;margin:0 0 20px}
+.letter p{margin:0 0 14px}.letter strong{color:#cb396b}
+.signature{text-align:right;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;font-weight:750;color:#d43d70;margin-top:18px}
+.end{background:#fff;color:#24191d;text-align:center}
+.end .soft{font-size:clamp(28px,8vw,50px)}
+.end-flower{font-size:72px;margin-top:20px;animation:float 3s ease-in-out infinite}
+.next{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:30;width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.16);color:#fff;font-size:22px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);opacity:0;transition:.4s}
+.next.show{opacity:1}
+.progress{position:fixed;left:18px;right:18px;top:calc(10px + env(safe-area-inset-top));height:3px;display:flex;gap:5px;z-index:35}
+.progress i{flex:1;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}
+.progress i::after{content:"";display:block;height:100%;width:0;background:#fff;transition:.6s}
+.progress i.done::after,.progress i.current::after{width:100%}
+canvas{position:fixed;inset:0;z-index:20;pointer-events:none}
+.install{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:40;background:rgba(20,14,17,.88);color:#fff;padding:9px 13px;border-radius:999px;font-size:11px;opacity:0;transition:.5s;white-space:nowrap}.install.show{opacity:1}
 </style>
 </head>
 <body>
-<div class="bg"></div><div class="glow"></div>
-<div class="intro" id="intro"><div class="intro-box"><div class="intro-flower">🌷</div><div class="intro-title">Tengo algo para ti</div><div class="intro-small">Toca la pantalla</div></div></div>
-<canvas id="flowers"></canvas>
-<main class="shell">
-  <section class="card" id="card">
-    <div class="badge">🌷</div>
-    <h1>Para el amor de mi vida</h1>
-    <div class="subtitle">Para ti, para nuestro hijo y para la nueva vida que viene en camino</div>
-    <div class="message" id="message">
-      <p>Amor:</p>
-      <p>Hace años comenzamos esta aventura tú y yo. Después llegó nuestro hijo y convirtió nuestro amor en una familia.</p>
-      <p>Ahora, mientras llevas una nueva vida dentro de ti, vuelvo a enamorarme de ti de una manera distinta.</p>
-      <p>Gracias por ser el corazón de nuestra casa, por cuidar de nuestro hijo y por darle un nuevo compañero de vida.</p>
-      <p>No sé cómo será el futuro, pero sí sé dónde quiero vivirlo: a tu lado, viendo crecer a nuestros hijos.</p>
-      <p>Los amo a los tres con todo lo que soy.</p>
-      <p class="signature">Siempre tuyo ❤️</p>
+<div id="stage">
+  <div class="progress" id="progress"></div>
+  <canvas id="fx"></canvas>
+
+  <section class="scene active" id="s0">
+    <div class="center">
+      <div class="heartbeat">❤️</div>
+      <div class="kicker">Para el amor de mi vida</div>
+      <div class="big">Tengo algo que decirte...</div>
+      <button class="tap" id="start">Toca para comenzar</button>
     </div>
-    <div class="family" id="family">👨‍👩‍👦‍👶 🌷</div>
-    <button class="tap" id="more">Toca para llenar el cielo de tulipanes</button>
-    <div class="note">Puedes mover los tulipanes con el dedo</div>
   </section>
-</main>
-<div class="install" id="install">Safari → Compartir → Añadir a pantalla de inicio</div>
+
+  <section class="scene chat-screen" id="s1">
+    <div class="chat-wrap">
+      <div class="status"><span id="clock">9:41</span><span>●●● 5G 🔋</span></div>
+      <div class="header"><div class="avatar">🌷</div><div class="name">Amor</div></div>
+      <div class="chat">
+        <div class="bubble typing" id="typing"><i></i><i></i><i></i></div>
+        <div class="bubble" id="b1">Amor...</div>
+        <div class="bubble" id="b2">Antes de que aparezca algo en esta pantalla, quiero decirte algo...</div>
+      </div>
+      <div class="composer"><div class="circle">📷</div><div class="input">iMessage</div><div class="circle">↑</div></div>
+    </div>
+  </section>
+
+  <section class="scene story" id="s2">
+    <div class="story-text"><span>Hace algunos años...</span>éramos solamente tú y yo.<div class="family-icons">👫</div></div>
+  </section>
+
+  <section class="scene story" id="s3">
+    <div class="story-text"><span>Entonces llegó nuestro hijo...</span>y nuestro amor encontró una nueva forma de crecer.<div class="family-icons">👨‍👩‍👦</div></div>
+  </section>
+
+  <section class="scene story" id="s4">
+    <div class="story-text"><span>Y ahora...</span>mientras sostienes una nueva vida dentro de ti...<br><br><strong>vuelvo a enamorarme de ti.</strong><div class="family-icons">👨‍👩‍👦‍👶</div></div>
+  </section>
+
+  <section class="scene letter-scene" id="s5">
+    <article class="letter">
+      <h2>Amor...</h2>
+      <p>Nunca imaginé que la vida pudiera regalarme tanto.</p>
+      <p>Primero llegaste tú.</p>
+      <p>Después llegó nuestro hijo.</p>
+      <p>Y ahora nuestro bebé viene en camino.</p>
+      <p>Cada etapa contigo ha sido distinta, pero todas tienen algo en común: <strong>siempre han sido las mejores de mi vida.</strong></p>
+      <p>Gracias por cada abrazo, por cada desvelo, por cuidar de nuestro pequeño y por cuidar también de la vida que hoy crece dentro de ti.</p>
+      <p>Cuando miro nuestra familia entiendo que todos mis sueños terminaron encontrando un hogar.</p>
+      <p>No sé qué nos espera mañana, pero sí sé con quién quiero vivir cada uno de esos mañanas.</p>
+      <p>Quiero seguir riendo contigo. Quiero seguir viendo crecer a nuestros hijos. Quiero seguir tomándote de la mano cuando ya seamos viejitos.</p>
+      <p>Y cuando nuestros hijos nos pregunten cuál fue la mejor decisión de mi vida, siempre responderé la misma:</p>
+      <p><strong>Elegirte a ti.</strong></p>
+      <p>Porque tú eres mi hogar, mi paz y el amor de mi vida.</p>
+      <p>Los amo más de lo que las palabras pueden explicar.</p>
+      <p><strong>Gracias por regalarme esta familia.</strong></p>
+      <div class="signature">Siempre tu esposo ❤️</div>
+    </article>
+  </section>
+
+  <section class="scene end" id="s6">
+    <div class="center">
+      <div class="soft">Lo mejor de nuestra historia...<br><strong>todavía está por escribirse.</strong></div>
+      <div class="end-flower">🌷</div>
+      <button class="tap" id="again" style="color:#24191d;border-color:rgba(36,25,29,.18);background:rgba(36,25,29,.05)">Ver de nuevo</button>
+    </div>
+  </section>
+
+  <button class="next" id="next">›</button>
+  <div class="install" id="install">Safari → Compartir → Añadir a pantalla de inicio</div>
+</div>
+
 <script>
-const intro=document.getElementById('intro'),card=document.getElementById('card'),message=document.getElementById('message'),family=document.getElementById('family'),more=document.getElementById('more'),install=document.getElementById('install');
-const canvas=document.getElementById('flowers'),ctx=canvas.getContext('2d');
-let W,H,dpr=Math.min(devicePixelRatio||1,2),items=[],pointer=null,tiltX=0,tiltY=0,opened=false;
-function resize(){W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}
-addEventListener('resize',resize);resize();
+const scenes=[...document.querySelectorAll('.scene')],next=document.getElementById('next'),progress=document.getElementById('progress');
+let current=0,started=false,timers=[];
+for(let i=0;i<scenes.length;i++){const x=document.createElement('i');progress.appendChild(x)}
+function clearTimers(){timers.forEach(clearTimeout);timers=[]}
+function later(fn,ms){timers.push(setTimeout(fn,ms))}
+function setProgress(){[...progress.children].forEach((x,i)=>{x.className=i<current?'done':i===current?'current':''})}
+function showScene(n){
+  clearTimers();current=n;scenes.forEach((s,i)=>s.classList.toggle('active',i===n));setProgress();
+  next.classList.toggle('show',n>0&&n<6);
+  if(n===1)playChat();
+  if(n===2){burst(20);later(()=>burst(15),1100)}
+  if(n===3){burst(50);later(()=>burst(35),900)}
+  if(n===4){burst(110);later(()=>burst(80),950);vibrate([30,30,60])}
+  if(n===5){burst(140);later(()=>burst(80),800)}
+  if(n===6){items=[];later(()=>burst(220),900);vibrate([25,25,25,25,70]);if(!matchMedia('(display-mode: standalone)').matches)later(()=>{install.classList.add('show');later(()=>install.classList.remove('show'),6500)},2500)}
+}
+function vibrate(p){if(navigator.vibrate)navigator.vibrate(p)}
+function playChat(){
+  const t=document.getElementById('typing'),b1=document.getElementById('b1'),b2=document.getElementById('b2');
+  t.style.display='flex';t.classList.add('show');b1.classList.remove('show');b2.classList.remove('show');
+  later(()=>{t.style.display='none';b1.classList.add('show');vibrate(35)},1500);
+  later(()=>{b2.classList.add('show');vibrate(45)},3000);
+  later(()=>showScene(2),5600);
+}
+document.getElementById('start').onclick=()=>{started=true;showScene(1)};
+next.onclick=()=>showScene(Math.min(current+1,6));
+document.getElementById('again').onclick=()=>{items=[];showScene(0)};
+document.addEventListener('click',e=>{if(!started||e.target.closest('button')||current===1||current===5||current===6)return;showScene(Math.min(current+1,6))});
+const d=new Date();document.getElementById('clock').textContent=d.toLocaleTimeString('es-MX',{hour:'numeric',minute:'2-digit'});
+setProgress();
+
+const canvas=document.getElementById('fx'),ctx=canvas.getContext('2d');let W,H,dpr=Math.min(devicePixelRatio||1,2),items=[],tiltX=0,tiltY=0;
+function resize(){W=innerWidth;H=innerHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
 const rnd=(a,b)=>Math.random()*(b-a)+a;
-function flower(x=rnd(0,W),y=rnd(0,H)){return{x,y,vx:rnd(-.5,.5),vy:rnd(-.9,-.1),size:rnd(24,45),rot:rnd(-.3,.3),vr:rnd(-.012,.012),emoji:Math.random()<.86?'🌷':(Math.random()<.55?'🌸':'💗'),grab:false}}
-function burst(n=70,x=W/2,y=H*.48){for(let i=0;i<n;i++){const f=flower(x+rnd(-35,35),y+rnd(-30,30)),a=rnd(0,Math.PI*2),s=rnd(1.2,4.6);f.vx=Math.cos(a)*s;f.vy=Math.sin(a)*s-1.2;items.push(f)}}
-function animate(){ctx.clearRect(0,0,W,H);for(const f of items){if(!f.grab){f.vx+=tiltX*.014;f.vy+=tiltY*.01-.006;f.vx*=.997;f.vy*=.997;f.x+=f.vx;f.y+=f.vy;f.rot+=f.vr;if(f.x<-50)f.x=W+40;if(f.x>W+50)f.x=-40;if(f.y<-60)f.y=H+40;if(f.y>H+60)f.y=-40}ctx.save();ctx.translate(f.x,f.y);ctx.rotate(f.rot);ctx.font=f.size+'px Apple Color Emoji, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(90,30,55,.18)';ctx.shadowBlur=9;ctx.shadowOffsetY=4;ctx.fillText(f.emoji,0,0);ctx.restore()}requestAnimationFrame(animate)}animate();
-function nearest(x,y){let best=null,dist=999;for(const f of items){const d=Math.hypot(f.x-x,f.y-y);if(d<dist&&d<f.size){best=f;dist=d}}return best}
-canvas.addEventListener('pointerdown',e=>{const f=nearest(e.clientX,e.clientY);pointer={id:e.pointerId,x:e.clientX,y:e.clientY,f};if(f){f.grab=true;canvas.setPointerCapture(e.pointerId)}});
-canvas.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId||!pointer.f)return;const f=pointer.f;f.vx=(e.clientX-pointer.x)*.17;f.vy=(e.clientY-pointer.y)*.17;f.x=e.clientX;f.y=e.clientY;pointer.x=e.clientX;pointer.y=e.clientY});
-function release(e){if(!pointer||pointer.id!==e.pointerId)return;if(pointer.f)pointer.f.grab=false;pointer=null}canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);
-if(window.DeviceOrientationEvent)addEventListener('deviceorientation',e=>{if(e.gamma!=null)tiltX=Math.max(-1,Math.min(1,e.gamma/30));if(e.beta!=null)tiltY=Math.max(-1,Math.min(1,(e.beta-25)/40))});
-function openCard(){if(opened)return;opened=true;intro.classList.add('hide');setTimeout(()=>{card.classList.add('show');burst(46);if(navigator.vibrate)navigator.vibrate([35,35,65])},350);setTimeout(()=>message.classList.add('show'),1050);setTimeout(()=>family.classList.add('show'),1800);setTimeout(()=>more.classList.add('show'),2400);if(!matchMedia('(display-mode: standalone)').matches)setTimeout(()=>{install.classList.add('show');setTimeout(()=>install.classList.remove('show'),7000)},4300)}
-intro.addEventListener('click',openCard,{once:true});intro.addEventListener('touchend',openCard,{once:true});
-more.addEventListener('click',()=>{burst(110,rnd(W*.25,W*.75),rnd(H*.25,H*.65));if(navigator.vibrate)navigator.vibrate([25,25,25]);});
+function make(x=rnd(0,W),y=rnd(0,H)){return{x,y,vx:rnd(-.7,.7),vy:rnd(-.7,.7),size:rnd(20,43),rot:rnd(-.4,.4),vr:rnd(-.016,.016),emoji:Math.random()<.82?'🌷':Math.random()<.6?'💗':'🌸'}}
+function burst(n,x=W/2,y=H*.5){for(let i=0;i<n;i++){const f=make(x+rnd(-50,50),y+rnd(-45,45)),a=rnd(0,Math.PI*2),s=rnd(1.2,4.7);f.vx=Math.cos(a)*s;f.vy=Math.sin(a)*s-1.1;items.push(f)}}
+function draw(){ctx.clearRect(0,0,W,H);for(const f of items){f.vx+=tiltX*.013;f.vy+=tiltY*.01-.004;f.vx*=.997;f.vy*=.997;f.x+=f.vx;f.y+=f.vy;f.rot+=f.vr;if(f.x<-60)f.x=W+50;if(f.x>W+60)f.x=-50;if(f.y<-70)f.y=H+60;if(f.y>H+70)f.y=-60;ctx.save();ctx.translate(f.x,f.y);ctx.rotate(f.rot);ctx.font=f.size+'px Apple Color Emoji, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.shadowColor='rgba(80,10,40,.22)';ctx.shadowBlur=10;ctx.shadowOffsetY=4;ctx.fillText(f.emoji,0,0);ctx.restore()}requestAnimationFrame(draw)}draw();
+if(window.DeviceOrientationEvent)addEventListener('deviceorientation',e=>{if(e.gamma!=null)tiltX=Math.max(-1,Math.min(1,e.gamma/28));if(e.beta!=null)tiltY=Math.max(-1,Math.min(1,(e.beta-25)/38))});
 if('serviceWorker'in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
 </script>
 </body>
