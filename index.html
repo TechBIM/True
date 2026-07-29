@@ -26,7 +26,7 @@ body{min-height:100svh;touch-action:none}
 .bubble{max-width:82%;padding:11px 15px;border-radius:21px;font-size:17px;line-height:1.3;opacity:0;transform:translateY(12px) scale(.96);transition:.55s cubic-bezier(.2,.8,.2,1);box-shadow:0 3px 10px rgba(0,0,0,.04)}
 .bubble.show{opacity:1;transform:none}
 .incoming{background:#e5e5ea;color:#000;border-bottom-left-radius:7px}
-.special{background:linear-gradient(135deg,#ff7aa5,#ff4f82);color:#fff;border-bottom-left-radius:7px;font-weight:600}
+.special{background:linear-gradient(135deg,#ff7aa5,#ff4f82);color:#fff;border-bottom-left-radius:7px;font-weight:600;cursor:pointer;position:relative;z-index:30}
 .typing{display:flex;gap:5px;align-items:center;width:64px}
 .typing i{width:7px;height:7px;border-radius:50%;background:#8e8e93;animation:dot 1.2s infinite}
 .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
@@ -34,7 +34,7 @@ body{min-height:100svh;touch-action:none}
 .composer{position:absolute;left:0;right:0;bottom:0;height:78px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(248,248,250,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid rgba(60,60,67,.15);display:flex;gap:9px;z-index:25}
 .circle{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#d1d1d6}
 .input{height:36px;flex:1;border:1px solid #c7c7cc;border-radius:18px;background:#fff;display:flex;align-items:center;padding:0 12px;color:#8e8e93}
-canvas{position:fixed;inset:0;z-index:10;pointer-events:auto}
+canvas{position:fixed;inset:0;z-index:10;pointer-events:auto} canvas.final-mode{z-index:60}
 .overlay{position:fixed;inset:0;z-index:40;background:rgba(242,242,247,.35);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:.5s}
 .overlay.show{opacity:1;pointer-events:auto}
 .card{width:min(92vw,560px);max-height:82svh;overflow:auto;background:rgba(255,255,255,.96);border-radius:30px;padding:28px 23px 24px;box-shadow:0 30px 90px rgba(95,35,60,.23);border:1px solid rgba(255,255,255,.9);transform:translateY(25px) scale(.96);transition:.6s cubic-bezier(.2,.8,.2,1);color:#3c2b31}
@@ -45,7 +45,7 @@ canvas{position:fixed;inset:0;z-index:10;pointer-events:auto}
 .final-btn{width:100%;border:0;border-radius:999px;padding:14px 18px;background:linear-gradient(135deg,#ff6b9a,#ff3f76);color:#fff;font-weight:700;font-size:15px;margin-top:8px}
 .ending{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;transition:1s;background:radial-gradient(circle at center,rgba(255,255,255,.82),rgba(255,232,240,.5),transparent 72%)}
 .ending.show{opacity:1;pointer-events:auto}
-.ending-text{font-family:Georgia,"Times New Roman",serif;font-size:clamp(30px,9vw,54px);line-height:1.25;color:#7f2448;text-shadow:0 4px 18px rgba(255,255,255,.8);padding:18px 20px;background:rgba(255,255,255,.65);border-radius:28px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.ending-text{position:relative;z-index:70;font-family:Georgia,"Times New Roman",serif;font-size:clamp(30px,9vw,54px);line-height:1.25;color:#7f2448;text-shadow:0 4px 18px rgba(255,255,255,.8);padding:18px 20px;background:rgba(255,255,255,.65);border-radius:28px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .install{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:60;background:rgba(20,14,17,.88);color:#fff;padding:9px 13px;border-radius:999px;font-size:11px;opacity:0;transition:.5s;white-space:nowrap}.install.show{opacity:1}
 </style>
 </head>
@@ -114,16 +114,31 @@ async function sequence(){
     await wait(i===4?1700:1000);
   }
   addMessage("Tengo algo más para ti... ❤️",true);
-  const last=chat.lastElementChild;
-  last.style.cursor='pointer';
-  last.addEventListener('click',()=>overlay.classList.add('show'),{once:true});
+  const lastRow=chat.lastElementChild;
+  const lastBubble=lastRow.querySelector('.bubble');
+  const openCard=()=>{
+    overlay.classList.add('show');
+    vibrate([35,25,55]);
+  };
+  lastRow.setAttribute('role','button');
+  lastRow.setAttribute('aria-label','Abrir mensaje especial');
+  lastRow.tabIndex=0;
+  lastRow.addEventListener('click',openCard);
+  lastRow.addEventListener('pointerup',openCard);
+  lastRow.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openCard()}});
+  lastBubble.textContent="Tengo algo más para ti... ❤️  Toca aquí";
+  await wait(1800);
+  if(!overlay.classList.contains('show')) openCard();
 }
 addEventListener('load',sequence);
 
-document.getElementById('finalBtn').addEventListener('click',()=>{
+document.getElementById('finalBtn').addEventListener('click',async()=>{
   overlay.classList.remove('show');
+  await wait(900);
+  items=[];
+  canvas.classList.add('final-mode');
   ending.classList.add('show');
-  burst(500);
+  burstFromEdges(500);
   vibrate([30,25,30,25,80]);
   if(!matchMedia('(display-mode: standalone)').matches){
     setTimeout(()=>{install.classList.add('show');setTimeout(()=>install.classList.remove('show'),7000)},2500);
@@ -139,6 +154,17 @@ addEventListener('resize',resize);resize();
 const rnd=(a,b)=>Math.random()*(b-a)+a;
 function make(x=rnd(0,W),y=rnd(0,H)){return{x,y,vx:rnd(-.6,.6),vy:rnd(-.7,.7),size:rnd(20,42),rot:rnd(-.4,.4),vr:rnd(-.014,.014),emoji:Math.random()<.82?'🌷':Math.random()<.65?'💗':'🌸',grab:false}}
 function burst(n,x=W/2,y=H*.48){for(let i=0;i<n;i++){const f=make(x+rnd(-50,50),y+rnd(-40,40)),a=rnd(0,Math.PI*2),s=rnd(1.1,4.4);f.vx=Math.cos(a)*s;f.vy=Math.sin(a)*s-1.2;items.push(f)}}
+function burstFromEdges(n){
+  for(let i=0;i<n;i++){
+    const side=Math.floor(Math.random()*4);
+    let x,y,vx,vy;
+    if(side===0){x=rnd(0,W);y=-35;vx=rnd(-1.2,1.2);vy=rnd(1.2,4.2)}
+    else if(side===1){x=W+35;y=rnd(0,H);vx=rnd(-4.2,-1.2);vy=rnd(-1.2,1.2)}
+    else if(side===2){x=rnd(0,W);y=H+35;vx=rnd(-1.2,1.2);vy=rnd(-4.2,-1.2)}
+    else{x=-35;y=rnd(0,H);vx=rnd(1.2,4.2);vy=rnd(-1.2,1.2)}
+    const f=make(x,y);f.vx=vx;f.vy=vy;items.push(f);
+  }
+}
 function nearest(x,y){let best=null,dist=999;for(const f of items){const d=Math.hypot(f.x-x,f.y-y);if(d<dist&&d<f.size){best=f;dist=d}}return best}
 canvas.addEventListener('pointerdown',e=>{const f=nearest(e.clientX,e.clientY);pointer={id:e.pointerId,x:e.clientX,y:e.clientY,f};if(f){f.grab=true;canvas.setPointerCapture(e.pointerId)}});
 canvas.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId||!pointer.f)return;const f=pointer.f;f.vx=(e.clientX-pointer.x)*.18;f.vy=(e.clientY-pointer.y)*.18;f.x=e.clientX;f.y=e.clientY;pointer.x=e.clientX;pointer.y=e.clientY});
