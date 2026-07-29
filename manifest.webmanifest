@@ -1,14 +1,12 @@
 {
-  "name": "Para el amor de mi vida",
-  "short_name": "Para ti",
-  "description": "Una historia para mi esposa y nuestra familia.",
-  "start_url": "./",
-  "scope": "./",
-  "display": "standalone",
-  "background_color": "#09070a",
-  "theme_color": "#09070a",
-  "orientation": "portrait",
-  "icons": [
-    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
-  ]
+  "name":"Para ti",
+  "short_name":"Para ti",
+  "description":"Un mensaje especial para mi esposa.",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#f2f2f7",
+  "theme_color":"#f2f2f7",
+  "orientation":"portrait",
+  "icons":[{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }
